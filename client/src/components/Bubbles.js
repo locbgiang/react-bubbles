@@ -45,7 +45,7 @@ const Bubbles = ({ colors }) => {
               .filter(v => v)
           }
         </Pack>
-      </Svg>
+        </Svg>
     </div>
   );
 };
