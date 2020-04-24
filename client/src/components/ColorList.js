@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useHistory } from 'react-router-dom'; 
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -7,9 +8,9 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const {push} = useHistory();
 
   const editColor = color => {
     setEditing(true);
@@ -18,15 +19,33 @@ const ColorList = ({ colors, updateColors }) => {
 
   const saveEdit = e => {
     e.preventDefault();
+    axiosWithAuth()
+    .put(`/api/colors/${colors.id}`, colorToEdit)
+    .then(res=>{
+      const updated = colors.slice();
+      updated[colorToEdit.id-1]= res.data;
+      updateColors(updated);
+    })
+
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
   };
 
   const deleteColor = color => {
+    axiosWithAuth()
+    .delete(`/api/colors/${color.id}`, color)
+    .then(res=>{
+      const newColorList = colors.filter(colorfilter => `${colorfilter.id}` != res.data);
+      console.log('new color list', newColorList)
+      updateColors(newColorList);
+    })
     // make a delete request to delete this color
   };
 
+  if(colors.length<1){
+    return <div>Loading Colors...</div>
+  }
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -48,6 +67,7 @@ const ColorList = ({ colors, updateColors }) => {
               style={{ backgroundColor: color.code.hex }}
             />
           </li>
+
         ))}
       </ul>
       {editing && (
