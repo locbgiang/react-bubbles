@@ -13,8 +13,8 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Link to='/login'>Login</Link><br/>
-        <Link to='/protected'>Protected Page</Link>
+        <Link to='/login'><div>Login</div></Link>
+        <Link to='/protected'><p>Protected Page</p></Link>
         <Switch>
           <PrivateRoute exact path='/protected' component={BubblePage} />
           <Route path='/login' component={Login}></Route>
